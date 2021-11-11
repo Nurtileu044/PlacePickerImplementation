@@ -40,9 +40,7 @@ class MapActivity : AppCompatActivity(), InputListener {
                 setResult(REQUEST_CODE, intent)
                 finish()
             }
-
-            /*addPlacemark(Point(preferences?.getDouble(PREF_KEY_LATITUDE, 0.0) ?: 0.0, preferences?.getDouble(PREF_KEY_LONGITUDE, 0.0) ?: 0.0))*/
-
+            
             mapView.map.addInputListener(this@MapActivity)
         }
 
