@@ -40,8 +40,19 @@ class MainActivity : AppCompatActivity() {
                         0.0
                     ) != null || data?.getDoubleExtra("Longitude", 0.0) != null
                 ) {
-                    latitudeTextView.text = "LATITUDE: ${data?.getDoubleExtra("Latitude", 0.0)}"
-                    longitudeTextView.text = "LONGITUDE: ${data?.getDoubleExtra("Longitude", 0.0)}"
+                    "LATITUDE: ${
+                        data.getDoubleExtra(
+                            "Latitude",
+                            0.0
+                        )
+                    }".also { latitudeTextView.text = it }
+                    "LONGITUDE: ${
+                        data.getDoubleExtra(
+                            "Longitude",
+                            0.0
+                        )
+                    }".also { longitudeTextView.text = it }
+                    "ADDRESS: ${data.getStringExtra("Address")}".also { addressTextView.text = it }
 
                     longitude = data.getDoubleExtra("Longitude", 0.0)
                     latitude = data.getDoubleExtra("Latitude", 0.0)

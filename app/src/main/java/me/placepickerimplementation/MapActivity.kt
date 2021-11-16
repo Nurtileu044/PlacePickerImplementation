@@ -2,6 +2,7 @@ package me.placepickerimplementation
 
 import android.R
 import android.content.Intent
+import android.location.Geocoder
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -11,12 +12,16 @@ import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
 import com.yandex.runtime.image.ImageProvider
 import me.placepickerimplementation.databinding.ActivityMapBinding
+import java.io.IOException
+import java.util.*
+
 
 class MapActivity : AppCompatActivity(), InputListener {
 
     private lateinit var binding: ActivityMapBinding
     private var placemark: PlacemarkMapObject? = null
     private var location: List<Double> = emptyList()
+    private lateinit var city: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,10 +42,11 @@ class MapActivity : AppCompatActivity(), InputListener {
                 val intent = Intent()
                 intent.putExtra("Latitude", location[0])
                 intent.putExtra("Longitude", location[1])
+                intent.putExtra("Address", city)
                 setResult(REQUEST_CODE, intent)
                 finish()
             }
-            
+
             mapView.map.addInputListener(this@MapActivity)
         }
 
@@ -59,13 +65,28 @@ class MapActivity : AppCompatActivity(), InputListener {
     }
 
     override fun onMapTap(map: Map, point: Point) {
+        addPlacemark(point)
+
+        val geocoder = Geocoder(this, Locale.getDefault())
+        city = try {
+            val addresses = geocoder.getFromLocation(point.latitude, point.longitude, 1)
+            if (!addresses.isNullOrEmpty()) {
+                val returnedAddress = addresses[0]
+                returnedAddress.countryName + ", " + returnedAddress.adminArea.toString() + ", " + returnedAddress.featureName.toString()
+            } else {
+                "Error"
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            "Error"
+        }
+
         Toast.makeText(
             this@MapActivity,
-            "LONGITUDE: ${point.longitude}, LATITUDE: ${point.latitude}",
+            "LONGITUDE: ${point.longitude}, LATITUDE: ${point.latitude}, ADDRESS: $city",
             Toast.LENGTH_SHORT
         ).show()
         location = listOf(point.latitude, point.longitude)
-        addPlacemark(point)
     }
 
     override fun onMapLongTap(map: Map, point: Point) {
